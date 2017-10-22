@@ -1,15 +1,36 @@
-## Put comments here that give an overall description of what your
-## functions do
+## MakeCacheMatrix creates a matrix
+## cacheSolve calculates an inverse of that matrix and caches the result
+## if run a second time it just returns the cached result
 
-## Write a short comment describing this function
+## makeCacheMatrix creates a matrix; default is a 2 by 2 matrix with 4, 2, 7, 6. Then sets inv_cache as NULL
 
-makeCacheMatrix <- function(x = matrix()) {
-
+makeCacheMatrix <- function(x = matrix(c(4, 2, 7, 6),2,2)) {
+  inv_cache <- NULL
+  set <- function(y) {
+    x <<- y
+    inv_cache <<- NULL
+  }
+  get <- function() x
+  setsolve <- function(solve) inv_cache <<- solve
+  getsolve <- function() inv_cache
+  list(set = set, get = get,
+       setsolve = setsolve,
+       getsolve = getsolve)
 }
 
 
-## Write a short comment describing this function
+## cacheSolve returns inverse of matrix created by makeCacheMatrix then stores value in inv_cache, when run a second time it 
+## will just retrieve the already calculated value from inv_cache
+##Note: save makeCacheMatrix to a value first eg: x <- makeCacheMatrix((matrix(c(8,3,2,4,5,6,7,8,5),3,3))) then run cacheSolve(x)
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  inv_cache <- x$getsolve()
+  if(!is.null(inv_cache)) {
+    message("getting cached data")
+    return(inv_cache)
+  }
+  data <- x$get()
+  inv_cache <- solve(data, ...)
+  x$setsolve(inv_cache)
+  inv_cache
 }
